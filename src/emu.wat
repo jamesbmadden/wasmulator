@@ -308,6 +308,7 @@
     (if
       (then
         nop ;; nop! do nothing :)
+        return ;; we're done for this cycle
       )
     )
 
@@ -326,6 +327,7 @@
         global.set $ra ;; write back to ra
         ;; check if carry out needs to be added
         ;; TODO: flags
+        return ;; we're done for this cycle
       )
     )
     ;; basic sub op has hnibble = 9
@@ -343,6 +345,7 @@
         global.set $ra ;; write back to ra
         ;; check if carry out needs to be added
         ;; TODO: flags
+        return ;; we're done for this cycle
       )
     )
     ;; basic AND or XOR op has hnibble = 10
@@ -378,6 +381,7 @@
         global.set $ra ;; write back to ra
         ;; check if carry out needs to be added
         ;; TODO: flags
+        return ;; we're done for this cycle
       )
     )
 
