@@ -17,14 +17,14 @@
   ;; using i32 since u8 doesn't exist in wasm but interpret as a u8
   ;; allow everything to be accessed from js for debugging
   (global $ra (export "ra") (mut i32) (i32.const 0))
-  (global $rb (export "rb") (mut i32) (i32.const 0))
-  (global $rc (export "rc") (mut i32) (i32.const 0))
-  (global $rd (export "rd") (mut i32) (i32.const 0))
-  (global $re (export "re") (mut i32) (i32.const 0))
+  (global $rb (export "rb") (mut i32) (i32.const 1))
+  (global $rc (export "rc") (mut i32) (i32.const 2))
+  (global $rd (export "rd") (mut i32) (i32.const 3))
+  (global $re (export "re") (mut i32) (i32.const 4))
   ;; note that rf is the flag register (zero, sub, half-carry, carry) in the upper 4 bits. lower all 0
   (global $rf (export "rf") (mut i32) (i32.const 0))
-  (global $rh (export "rh") (mut i32) (i32.const 0)) ;; quirk with gb registers, letters change now
-  (global $rl (export "rl") (mut i32) (i32.const 0))
+  (global $rh (export "rh") (mut i32) (i32.const 5)) ;; quirk with gb registers, letters change now
+  (global $rl (export "rl") (mut i32) (i32.const 6))
 
   ;; instruction/pointer registers
   (global $pr (export "pr") (mut i32) (i32.const 0))
@@ -178,11 +178,7 @@
 
   ;; set up memory for emulation
   (func $init (export "init")
-    ;; set ra and rb to test values
-    i32.const 1
-    global.set $ra
-    i32.const 2
-    global.set $rb
+    
   )
 
   ;; load the next operation
