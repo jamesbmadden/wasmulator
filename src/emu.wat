@@ -345,6 +345,41 @@
         ;; TODO: flags
       )
     )
+    ;; basic AND or XOR op has hnibble = 10
+    local.get $hnibble
+    i32.const 10
+    i32.eq
+    (if
+      (then
+        global.get $ra ;; sub ra by specified register
+        local.get $lnibble ;; lnibble contains which reg to read from
+        ;; if lnibble > 7, we're doing XOR
+        i32.const 7
+        i32.gt_u
+        (if
+          (then
+            ;; XOR op
+            local.get $lnibble
+            i32.const 8 ;; sub 8 to get the correct register index
+            i32.sub
+            call $read_reg
+            global.get $ra
+            i32.xor
+          )
+          (else
+            ;; AND op
+            local.get $lnibble
+            call $read_reg
+            global.get $ra
+            i32.and
+          )
+        ) 
+        
+        global.set $ra ;; write back to ra
+        ;; check if carry out needs to be added
+        ;; TODO: flags
+      )
+    )
 
 
   )
