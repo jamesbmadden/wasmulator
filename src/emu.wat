@@ -196,21 +196,136 @@
     global.set $pr
   )
 
+  ;; read a register - make it easier to manage instructions by avoiding having to repeat selecting registers each time
+  (func $read_reg (param $r i32) (result i32)
+    ;; 0 = B, 1 = C, 2 = D, 3 = E, 4 = H, 5 = L, 6 = HL, 7 = A
+    local.get $r
+    i32.const 0
+    i32.eq
+    (if
+      (then
+        global.get $rb
+        return
+      )
+    )
+    local.get $r
+    i32.const 1
+    i32.eq
+    (if
+      (then
+        global.get $rc
+        return
+      )
+    )
+    local.get $r
+    i32.const 2
+    i32.eq
+    (if
+      (then
+        global.get $rd
+        return
+      )
+    )
+    local.get $r
+    i32.const 3
+    i32.eq
+    (if
+      (then
+        global.get $re
+        return
+      )
+    )
+    local.get $r
+    i32.const 4
+    i32.eq
+    (if
+      (then
+        global.get $rh
+        return
+      )
+    )
+    local.get $r
+    i32.const 5
+    i32.eq
+    (if
+      (then
+        global.get $rl
+        return
+      )
+    )
+    local.get $r
+    i32.const 6
+    i32.eq
+    (if
+      (then
+        call $rhl_get
+        return
+      )
+    )
+    local.get $r
+    i32.const 7
+    i32.eq
+    (if
+      (then
+        global.get $ra
+        return
+      )
+    )
+    i32.const 0
+  )
+  ;; write a register - make it easier to manage instructions by avoiding having to repeat selecting registers each time
+  (func $write_reg (param $val i32) (param $r i32)
+
+  )
+  
+
   ;; run a CPU cycle
   (func $cycle (export "cycle")
     ;; now the exciting part! get the instruction at PR and then RUN IT!
+    ;; define local values for ease of reading instructions
+    (local $hnibble i32) ;; the high nibble of the instruction (bits 7-4)
+    (local $lnibble i32) ;; the low nibble of the instruction (bits 3-0)
+
     call $load_op ;; update pr and ir
     global.get $ir ;; get the current instruction
     call $log ;; log the current instruction so we need to get it again lol
 
-    ;; the flow of this section - load instruction, check if it's equal to different values.
+    ;; get the nibbles
+    global.get $ir
+    i32.const 15 ;; 0000 1111
+    i32.and ;; select only the lower 4 bits
+    local.set $lnibble
 
+    global.get $ir
+    i32.const 240 ;; 1111 0000
+    i32.and
+    i32.const 4 ;; shift right 4 bits
+    i32.shr_u
+    local.set $hnibble
+
+    ;; the flow of this section - load instruction, check if it's equal to different values.
     global.get $ir
     i32.const 0
     i32.eq
     (if
       (then
         nop ;; nop! do nothing :)
+      )
+    )
+
+    ;; basic add op has hnibble = 8
+    local.get $hnibble
+    i32.const 8
+    i32.eq
+    (if
+      (then
+        ;; TODO: whether or not to add carry
+        local.get $lnibble ;; lnibble contains which reg to read from
+        call $read_reg
+        global.get $ra ;; add ra with specified register
+        i32.add
+        global.set $ra ;; write back to ra
+        ;; TODO: flags
       )
     )
 
