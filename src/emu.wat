@@ -319,10 +319,29 @@
       (then
         ;; TODO: whether or not to add carry
         local.get $lnibble ;; lnibble contains which reg to read from
+        ;; if lnibble > 7, must also add carry out (if any)
         call $read_reg
         global.get $ra ;; add ra with specified register
         i32.add
         global.set $ra ;; write back to ra
+        ;; check if carry out needs to be added
+        ;; TODO: flags
+      )
+    )
+    ;; basic sub op has hnibble = 9
+    local.get $hnibble
+    i32.const 9
+    i32.eq
+    (if
+      (then
+        ;; TODO: whether or not to add carry
+        global.get $ra ;; sub ra by specified register
+        local.get $lnibble ;; lnibble contains which reg to read from
+        ;; if lnibble > 7, must also add carry out (if any)
+        call $read_reg
+        i32.sub
+        global.set $ra ;; write back to ra
+        ;; check if carry out needs to be added
         ;; TODO: flags
       )
     )

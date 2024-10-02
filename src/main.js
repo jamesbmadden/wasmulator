@@ -12,7 +12,7 @@ async function main () {
   // create a data view for the memory
   const memDv = new DataView(mem.buffer);
   // write some instructions into mem for testing
-  const instr = [ 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87 ];  // write instruction to add reg A and B
+  const instr = [ 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87, 0x90 ];  // write instruction to add reg A and B
   for (let i = 0; i < instr.length; i++) {
     memDv.setUint8(i * 8, instr[i]);
   }
