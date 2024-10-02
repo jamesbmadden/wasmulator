@@ -12,7 +12,7 @@ async function main () {
   // create a data view for the memory
   const memDv = new DataView(mem.buffer);
   // write some instructions into mem for testing
-  const instr = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ];
+  const instr = [ 0x80 ];  // write instruction to add reg A and B
   for (let i = 0; i < instr.length; i++) {
     memDv.setUint8(i * 8, instr[i]);
   }
@@ -32,6 +32,7 @@ async function main () {
 
   const tick = () => {
     emu.instance.exports.cycle();
+    console.log(emu.instance.exports.ra.value);
     requestAnimationFrame(tick);
   }
 

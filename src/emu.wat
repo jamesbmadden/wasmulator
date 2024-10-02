@@ -178,9 +178,11 @@
 
   ;; set up memory for emulation
   (func $init (export "init")
-    i32.const 0 ;; address in memory
-    i32.load ;; load value at address above
-    call $log ;; and log it
+    ;; set ra and rb to test values
+    i32.const 1
+    global.set $ra
+    i32.const 2
+    global.set $rb
   )
 
   ;; load the next operation
