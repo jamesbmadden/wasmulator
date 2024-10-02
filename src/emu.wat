@@ -27,7 +27,7 @@
   (global $rl (export "rl") (mut i32) (i32.const 6))
 
   ;; instruction/pointer registers
-  (global $pr (export "pr") (mut i32) (i32.const 0))
+  (global $pc (export "pc") (mut i32) (i32.const 0))
   (global $ir (export "ir") (mut i32) (i32.const 0))
 
   ;; gb has "virtual" registors - combinations that create a single u16 register
@@ -184,14 +184,14 @@
   ;; load the next operation
   (func $load_op
     ;; load value at PR in memory, then save to IR
-    global.get $pr
+    global.get $pc
     i32.load ;; loads from memory at index above
     global.set $ir
     ;; increase pr by 8
-    global.get $pr
+    global.get $pc
     i32.const 8
     i32.add
-    global.set $pr
+    global.set $pc
   )
 
   ;; read a register - make it easier to manage instructions by avoiding having to repeat selecting registers each time
@@ -312,6 +312,19 @@
       )
     )
 
+    ;; special behaviour if op = 0xCB = 203
+    global.get $ir
+    i32.const 203 ;; 0xCB
+    i32.eq
+    (if
+      (then
+        ;; TODO! 16-bit ops
+        ;; load the second part of the instruction
+        call $load_op ;; update pr and ir
+        return ;; nothing else should be done this cycle
+      )
+    )
+
     ;; basic add op has hnibble = 8
     local.get $hnibble
     i32.const 8
@@ -368,6 +381,7 @@
             call $read_reg
             global.get $ra
             i32.xor
+            global.set $ra ;; write back to ra
           )
           (else
             ;; AND op
@@ -375,11 +389,9 @@
             call $read_reg
             global.get $ra
             i32.and
+            global.set $ra ;; write back to ra
           )
         ) 
-        
-        global.set $ra ;; write back to ra
-        ;; check if carry out needs to be added
         ;; TODO: flags
         return ;; we're done for this cycle
       )
